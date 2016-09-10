@@ -1,21 +1,24 @@
-Rozwiązanie:
-(wszystkie mapy robię MAP_FIXED na dokładnie te miejsca, gdzie pokazują Program Headery/NT_FILE; cały faktyczny kod wykonuję w nowym kontekście z przesuniętym stosem).
+(translated from polish)
 
-1. Dla każdego PT_LOADa mapuję jego pamięć anonimowo na taki obszar jaki sugeruje memsz. W ten sposób jednocześnie zeruję tę pamięć.   
-2. Mapuję pliki z PT_NOTE (wpisy NT_FILE) po drodze wypełniając też globalnie pamiętane wartości rejestrów i TLS.
-3. Mapuję faktyczną pamieć z PT_LOADÓW.
-4. Ustawiam uprawnienia dla fragmentów pamięci z PT_LOAD zgodnie z flags.
-5. Odtwarzam TLS.
-6. Odtwarzam rejestry, w szczególności GS.
-7. Skaczę do EIP.
+Solution:
+(All maps do MAP_FIXED at exactly the place where the show program headers / NT_FILE; 
+the actual code doing in the new context of the pile shifted).
 
-Program linkuję pod jakiś niski adres, tutaj 0x48000. Stos zaczynam w 0x08000000 i ustawiam, żeby rósł w *dół*, aby nie "przebić" nim obszaru mapowanego.
+1. For each PT_LOADa maps its memory anonymously on the area which suggests memsz. 
+In this way, at the same time I reset the memory.
+2. maps files from PT_NOTE (entries NT_FILE) on the way to fill a globally minded values of registers and TLS.
+3. Map the real memory from the PT_LOADÓW.
+4. I set permissions for chunks of memory from PT_LOAD according to the flags.
+5. Playing TLS.
+6. Playing registers, in particular the GS.
+7. I jump to the EIP.
 
-Od momentu pierwszego mapowania, unikam GLIBC, aby wyeliminować problemy z przeskakiwaniem do miejsc w pamięci, w których jest już coś zmapowane (to daje losowe segfaulty) przez całą magię, która jest we wrapperach dodana. Wolam czyste syscalle.
+Link Program at a low address, 0x48000 here. Stack begin at 0x08000000 and 
+I set to grow at * down *, not to "break" the area mapped.
 
-Budowa klasycznie make [all] z poziomu najwyższego katalogu. Uwaga: to zbuduje (a więc i uruchomi) testy. Aby zbudować tylko źródło, make make_src lub make wewnątrz src/ .
+Since the first mapping, I avoid GLIBC to eliminate problems to jump to the memory locations 
+in which there is something already mapped (it gives random segfaulty) 
+by all the magic that is in wrapperach added. I invoke clean syscall.
 
-
-
-
-
+Construction of a classic make [all] with the highest level directory. 
+Note: This build (and therefore run) tests. To build only the source, make make_src or make inside src /.
